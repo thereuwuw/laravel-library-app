@@ -11,23 +11,34 @@ use App\Models\Loan;
 class Book extends Model
 {
     use HasFactory;
-    
-    public function canBeBorrowed(): bool {
+
+    protected $fillable = [
+        'title',
+        'author',
+        'year',
+        'copies_in_circulation',
+    ];
+
+    public function canBeBorrowed(): bool
+    {
         return $this->activeLoans() < $this->copies_in_circulation;
     }
 
-    public function activeLoans(): int {
+    public function activeLoans(): int
+    {
         return $this->loans()
             ->where('is_returned', false)
             ->get()
             ->sum('number_borrowed');
     }
 
-    public function loans(): HasMany {
+    public function loans(): HasMany
+    {
         return $this->hasMany(Loan::class);
     }
 
-    public function availableCopies(): int {
+    public function availableCopies(): int
+    {
         return $this->copies_in_circulation - $this->activeLoans();
     }
 }
